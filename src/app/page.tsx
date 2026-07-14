@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView, useScroll, useTransform, AnimatePresence, animate } from "framer-motion";
-import { FiDownload, FiGithub, FiLinkedin, FiInstagram, FiExternalLink, FiBriefcase, FiAward, FiBook, FiMonitor, FiCheck, FiServer, FiTool, FiCpu, FiClock, FiSend, FiUser, FiMail, FiMessageSquare } from "react-icons/fi";
+import { FiDownload, FiGithub, FiLinkedin, FiInstagram, FiExternalLink, FiBriefcase, FiAward, FiBook, FiMonitor, FiCheck, FiServer, FiTool, FiCpu, FiClock, FiSend, FiUser, FiMail, FiMessageSquare, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Loader from "../components/Loader";
 import Image from "next/image";
+import Link from "next/link";
+import { PROJECTS } from "../data/projects";
 const typingTitles = [
   "Flutter Developer",
   "UI/UX Enthusiast",
@@ -55,7 +57,7 @@ function CertificationsCarousel() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev - 1 + CERTIFICATIONS.length) % CERTIFICATIONS.length);
+      setCurrentIndex((prev) => (prev + 1) % CERTIFICATIONS.length);
     }, 6000);
     return () => clearInterval(timer);
   }, []);
@@ -159,52 +161,115 @@ function CertificationsCarousel() {
 }
 
 
-const PROJECTS = [
-  {
-    id: 1,
-    title: "RankSetu",
-    category: "AI-Powered Competitive Exam Platform",
-    description: "An intelligent competitive exam preparation platform designed to replace traditional learning methods with adaptive, AI-driven experiences. It combines mock tests, OCR-based question scanning, and real-time analytics into a single ecosystem.",
-    tech: ["Flutter", "Firebase", "Cloud Firestore", "Firebase Auth", "Firebase Storage", "FCM", "OCR", "REST APIs", "AI Integration"],
-    link: "#",
-    color: "from-primary/20 to-primary/5",
-    accent: "text-primary",
-    image: "/projects/ranksetu.png"
-  },
-  {
-    id: 2,
-    title: "Academiq",
-    category: "Smart Education Management Platform",
-    description: "A comprehensive education management system designed for colleges. It centralizes attendance, announcements, assignments, authentication, and role-based access into a unified mobile platform using Face Recognition and Geolocation.",
-    tech: ["Flutter", "Firebase", "Cloud Firestore", "Face API", "Geolocation", "Firebase Auth", "REST APIs"],
-    link: "#",
-    color: "from-secondary/20 to-secondary/5",
-    accent: "text-secondary",
-    image: "/projects/academiq.png"
-  },
-  {
-    id: 3,
-    title: "AI Dost",
-    category: "Offline AI Chat Assistant",
-    description: "An offline-first intelligent chatbot that delivers AI-powered assistance without relying on continuous internet connectivity. It focuses on fast local responses, privacy, and efficient knowledge retrieval.",
-    tech: ["Flutter", "SQLite", "NLP", "Offline AI Frameworks"],
-    link: "#",
-    color: "from-accent/20 to-accent/5",
-    accent: "text-accent",
-    image: "/projects/aidost.png"
-  },
-  {
-    id: 4,
-    title: "Experience Tracker",
-    category: "Personal Productivity & Career Management",
-    description: "A productivity application that helps users organize internships, certifications, achievements, projects, and career milestones with analytics and structured records.",
-    tech: ["Flutter", "Firebase", "Chart.js", "Local Storage"],
-    link: "#",
-    color: "from-success/20 to-success/5",
-    accent: "text-success",
-    image: "/projects/expensetracker.png"
-  }
-];
+// Projects data is now imported from src/data/projects.ts
+
+function ProjectsCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % PROJECTS.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="relative w-full flex flex-col gap-8 pb-10">
+      <div className="relative w-full min-h-[70vh] flex items-center justify-center overflow-visible">
+        <AnimatePresence mode="wait">
+          {PROJECTS.map((project, index) => {
+            if (index !== currentIndex) return null;
+            return (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, x: 50, scale: 0.98 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -50, scale: 0.98 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="absolute inset-0 w-full h-full glass bg-white/80 dark:bg-black/80 rounded-[3rem] overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col-reverse lg:flex-row group/card hover:border-primary/30 transition-all duration-700"
+              >
+                {/* Project Info */}
+                <div className="lg:w-1/2 p-10 md:p-16 flex flex-col justify-center h-full overflow-y-auto">
+                  <span className={`text-sm font-bold uppercase tracking-widest mb-4 ${project.accent}`}>
+                    {project.category}
+                  </span>
+                  <h3 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6 group-hover/card:text-transparent group-hover/card:bg-clip-text group-hover/card:bg-gradient-to-r group-hover/card:from-primary group-hover/card:to-secondary transition-all duration-500">
+                    {project.title}
+                  </h3>
+                  <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed font-inter">
+                    {project.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-3 mb-12">
+                    {project.tech.map((t) => (
+                      <span key={t} className="px-4 py-2 bg-black/5 dark:bg-white/5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 border border-black/5 dark:border-white/10 hover:border-primary hover:text-primary transition-colors cursor-default">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div>
+                    <Link href={project.link} className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-black rounded-full font-bold hover:scale-105 transition-transform shadow-[0_10px_20px_rgba(0,0,0,0.1)] group/btn">
+                      View Project <FiExternalLink className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Project Visual/Mockup */}
+                <div className={`lg:w-1/2 relative h-full bg-gradient-to-br ${project.color} flex items-center justify-center p-10 min-h-[300px] overflow-hidden`}>
+                  <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/5 dark:group-hover/card:bg-white/5 transition-colors duration-700 z-0"></div>
+                  <motion.div
+                    whileHover={{ scale: 1.05, rotateY: -15, rotateX: 10 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                    className="w-full max-w-md aspect-[4/3] bg-white/20 dark:bg-black/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex items-center justify-center relative z-10 overflow-hidden group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.4)] transition-shadow duration-500"
+                    style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                  >
+                    <div className="w-full h-full relative">
+                      <Image 
+                        src={project.image} 
+                        alt={project.title} 
+                        fill 
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover/card:scale-110 transition-transform duration-700 ease-out"
+                      />
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+        
+        {/* Navigation Arrows */}
+        <button 
+          onClick={() => setCurrentIndex((prev) => (prev - 1 + PROJECTS.length) % PROJECTS.length)}
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 dark:text-white shadow-xl border border-black/5 dark:border-white/10 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all z-20 group/nav"
+        >
+          <FiChevronLeft size={28} className="group-hover/nav:-translate-x-1 transition-transform" />
+        </button>
+        <button 
+          onClick={() => setCurrentIndex((prev) => (prev + 1) % PROJECTS.length)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/80 dark:bg-black/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 dark:text-white shadow-xl border border-black/5 dark:border-white/10 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all z-20 group/nav"
+        >
+          <FiChevronRight size={28} className="group-hover/nav:translate-x-1 transition-transform" />
+        </button>
+      </div>
+      
+      {/* Dots Indicator */}
+      <div className="flex gap-4 mt-8 justify-center z-20">
+        {PROJECTS.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`h-3 rounded-full transition-all duration-500 ${
+              idx === currentIndex ? "w-12 bg-primary" : "w-3 bg-slate-300 dark:bg-slate-700 hover:bg-primary/50"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // Staggered Text Animation Component
 const StaggeredText = ({ text }: { text: string }) => {
@@ -1050,91 +1115,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-full max-w-[1600px] mx-auto px-6 md:px-16 lg:px-24 flex flex-col gap-24 md:gap-32 pb-10">
-            {PROJECTS.map((project, index) => (
-              <div
-                key={project.id}
-                className="sticky z-10"
-                style={{ top: `calc(100px + ${index * 40}px)` }}
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 100, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: false, margin: "-50px" }}
-                  transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-                  className="glass bg-white/80 dark:bg-black/80 rounded-[3rem] overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col-reverse lg:flex-row min-h-[60vh] group/card hover:border-primary/30 transition-all duration-700"
-                >
-                  {/* Project Info */}
-                  <div className="lg:w-1/2 p-10 md:p-16 flex flex-col justify-center">
-                    <motion.span
-                      initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}
-                      className={`text-sm font-bold uppercase tracking-widest mb-4 ${project.accent}`}
-                    >
-                      {project.category}
-                    </motion.span>
-                    <motion.h3
-                      initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
-                      className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6 group-hover/card:text-transparent group-hover/card:bg-clip-text group-hover/card:bg-gradient-to-r group-hover/card:from-primary group-hover/card:to-secondary transition-all duration-500"
-                    >
-                      {project.title}
-                    </motion.h3>
-                    <motion.p
-                      initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}
-                      className="text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed font-inter"
-                    >
-                      {project.description}
-                    </motion.p>
-
-                    <motion.div
-                      initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.4 }}
-                      className="flex flex-wrap gap-3 mb-12"
-                    >
-                      {project.tech.map((t, i) => (
-                        <motion.span
-                          whileHover={{ scale: 1.1, y: -2 }}
-                          initial={{ opacity: 0, y: 10 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4 + (i * 0.05) }}
-                          key={t}
-                          className="px-4 py-2 bg-black/5 dark:bg-white/5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 border border-black/5 dark:border-white/10 hover:border-primary hover:text-primary transition-colors cursor-default"
-                        >
-                          {t}
-                        </motion.span>
-                      ))}
-                    </motion.div>
-
-                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-                      <a href={project.link} className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-black rounded-full font-bold hover:scale-105 transition-transform shadow-[0_10px_20px_rgba(0,0,0,0.1)] group/btn">
-                        View Project <FiExternalLink className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                      </a>
-                    </motion.div>
-                  </div>
-
-                  {/* Project Visual/Mockup */}
-                  <div className={`lg:w-1/2 relative bg-gradient-to-br ${project.color} flex items-center justify-center p-10 min-h-[300px] overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/0 group-hover/card:bg-black/5 dark:group-hover/card:bg-white/5 transition-colors duration-700 z-0"></div>
-                    <motion.div
-                      whileHover={{ scale: 1.05, rotateY: -15, rotateX: 10 }}
-                      transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                      className="w-full max-w-md aspect-[4/3] bg-white/20 dark:bg-black/20 backdrop-blur-md rounded-2xl border border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex items-center justify-center relative z-10 overflow-hidden group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.4)] transition-shadow duration-500"
-                      style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-                    >
-                      <motion.div
-                        className="w-full h-full relative"
-                      >
-                        <Image 
-                          src={project.image} 
-                          alt={project.title} 
-                          fill 
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover group-hover/card:scale-110 transition-transform duration-700 ease-out"
-                        />
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </div>
-            ))}
+          <div className="w-full max-w-[1600px] mx-auto px-6 md:px-16 lg:px-24 pb-10">
+            <ProjectsCarousel />
           </div>
         </section>
 
